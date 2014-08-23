@@ -29,7 +29,9 @@
 
 #include <ctype.h>
 #include <signal.h>
+#if defined(__unix__)
 #include <wait.h>
+#endif
 #include <errno.h>
 #include <time.h>
 
