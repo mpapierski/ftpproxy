@@ -13,6 +13,8 @@ matrix:
     - compiler: i586-mingw32msvc-gcc
       env: OPTIONS="-DWIN32=ON -DMINGW=ON"
       os: linux
+  allow_failures:
+    - compiler: i586-mingw32msvc-gcc
 script:
     - mkdir _build
     - cd _build
