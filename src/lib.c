@@ -58,88 +58,12 @@ void *reallocate(void *p, size_t size)
 	return (p);
 }
 
-
-
-static unsigned int lower[256], upper[256];
-
-static int _init_upper()
-{
-	unsigned int c;
-	
-	for (c = 0; c < 256; c++)
-		upper[c] = c;
-
-	for (c = 'a'; c < 'z'+1; c++)
-		upper[c] = 'A' + (c - 'a');
-
-	upper[c = (unsigned char) 'ä'] = 'Ä';
-	upper[c = (unsigned char) 'ö'] = 'Ö';
-	upper[c = (unsigned char) 'ü'] = 'Ü';
-
-	return (0);
-}
-
-static int _init_lower()
-{
-	unsigned int c;
-	
-	for (c = 0; c < 256; c++)
-		lower[c] = c;
-
-	for (c = 'A'; c < 'Z'+1; c++)
-		lower[c] = 'a' + (c - 'A');
-
-	lower[c = (unsigned char) 'Ä'] = 'ä';
-	lower[c = (unsigned char) 'Ö'] = 'ö';
-	lower[c = (unsigned char) 'Ü'] = 'ü';
-
-	return (0);
-}
-
-
-unsigned int uppercase(unsigned int c)
-{
-	if (upper['0'] == 0)
-		_init_upper();
-
-	return (upper[c]);
-}
-
-int isuppercase(unsigned int c)
-{
-	if (upper['0'] == 0)
-		_init_upper();
-
-	return (upper[c] == c);
-}
-
-unsigned int lowercase(unsigned int c)
-{
-	if (lower['0'] == 0)
-		_init_lower();
-
-	return (lower[c]);
-}
-
-int islowercase(unsigned int c)
-{
-	if (lower['0'] == 0)
-		_init_lower();
-
-	return (lower[c] == c);
-}
-
 char *strlwr(char *string)
 {
-	unsigned int c;
-	unsigned char *p;
+	int c;
 
-	if (lower['0'] == 0)
-		_init_lower();
-		
-	p = (unsigned char *) string;
-	while ((c = *p) != 0) {
-		*p++ = lower[c];
+	while ((c = *string) != 0) {
+		*string++ = tolower(c);
 		}
 
 	return (string);
@@ -147,15 +71,10 @@ char *strlwr(char *string)
 
 char *strupr(char *string)
 {
-	unsigned int c;
-	unsigned char *p;
+	int c;
 
-	if (upper['0'] == 0)
-		_init_upper();
-		
-	p = (unsigned char *) string;
-	while ((c = *p) != 0) {
-		*p++ = upper[c];
+	while ((c = *string) != 0) {
+		*string++ = toupper(c);
 		}
 
 	return (string);
@@ -163,9 +82,9 @@ char *strupr(char *string)
 
 char *skip_ws(char *string)
 {
-	unsigned int c;
+	int c;
 
-	while ((c = *string) == ' '  ||  c == '\t')
+	while (isspace(c = *string))
 		string++;
 
 	return (string);
@@ -176,6 +95,7 @@ char *noctrl(char *buffer)
 	int	len, i;
 	unsigned char *p;
 
+	// TODO: Use iscntrl here. iscntrl(32) returns 0 so figure out why space is converted to null byte too.
 	if ((p = (unsigned char *) buffer) == NULL)
 		return (NULL);
 

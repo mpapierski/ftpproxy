@@ -32,10 +32,6 @@ extern int verbose;
 void *allocate(size_t size);
 void *reallocate(void *p, size_t size);
 
-unsigned int uppercase(unsigned int c);
-int isuppercase(unsigned int c);
-unsigned int lowercase(unsigned int c);
-int islowercase(unsigned int c);
 char *strlwr(char *string);
 char *strupr(char *string);
 char *skip_ws(char *string);
