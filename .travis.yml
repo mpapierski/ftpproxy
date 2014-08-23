@@ -1,0 +1,14 @@
+language: c
+os:
+    - osx
+    - linux
+compiler:
+    - clang
+    - gcc
+env:
+    - BUILD_TYPE="Release"
+    - BUILD_TYPE="Debug"
+script:
+    - mkdir build && cd build
+    - cmake -DCMAKE_BUILD_TYPE="$BUILD_TYPE" ..
+    - cmake --build . --use-stderr
