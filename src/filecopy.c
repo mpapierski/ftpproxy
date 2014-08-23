@@ -41,7 +41,6 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <syslog.h>
 #include <sys/time.h>
 #include <time.h>
 

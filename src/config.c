@@ -43,6 +43,8 @@
 #include <arpa/inet.h>
 #include <sys/time.h>
 
+#include "config.h"
+
 #include "ftp.h"
 #include "procinfo.h"
 #include "lib.h"
@@ -229,13 +231,14 @@ int readconfig(config_t *config, char *filename, char *section)
 			get_parameter(&p, word, dir, sizeof(dir), filename, lineno);
 			setstatdir(dir);
 			}
-
+#if defined(HAVE_SYSLOG_H)
 		else if (strcmp(word, "facility") == 0) {
 			char	par[20];
 
 			get_parameter(&p, word, par, sizeof(par), filename, lineno);
 			logfacility = getfacility(par);
 			}
+#endif
 		else if (strcmp(word, "logname") == 0)
 			get_parameter(&p, word, logname, sizeof(logname), filename, lineno);
 

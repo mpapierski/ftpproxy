@@ -28,7 +28,6 @@
 #include <ctype.h>
 
 #include <signal.h>
-#include <syslog.h>
 
 #include <unistd.h>
 #include <sys/types.h>

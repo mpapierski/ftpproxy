@@ -41,7 +41,6 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>
-#include <syslog.h>
 #include <sys/time.h>
 
 

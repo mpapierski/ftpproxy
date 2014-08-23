@@ -22,11 +22,9 @@
 
  */
 
-
 #ifdef FACILITY_NAMES
 #define	SYSLOG_NAMES
 #endif
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -43,8 +41,13 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <syslog.h>
 #include <sys/time.h>
+
+#include "config.h"
+
+#ifdef HAVE_SYSLOG_H
+#include <syslog.h>
+#endif
 
 #include "ip-lib.h"
 #include "ftp.h"
@@ -103,12 +106,12 @@ char *getstatusline(char *status)
 
 int printerror(int rc, char *type, char *format, ...)
 {
-        char    *p, tag[30], error[1024];
-        va_list ap;
+	char    *p, tag[30], error[1024];
+	va_list ap;
 
-        va_start(ap, format);
-        vsnprintf (error, sizeof(error) - 2, format, ap);
-        va_end(ap);
+	va_start(ap, format);
+	vsnprintf (error, sizeof(error) - 2, format, ap);
+	va_end(ap);
 
 	*tag = 0;
 	if (*type != 0)
@@ -118,24 +121,28 @@ int printerror(int rc, char *type, char *format, ...)
 	if ((rc & ERR_EXITCODEMASK) != 0)
 		p = getstatusline(error);
 
-        if (debug != 0)
-                fprintf (stderr, "%s: %s%s\n", program, tag, p);
+	if (debug != 0)
+		fprintf (stderr, "%s: %s%s\n", program, tag, p);
 	else if ((rc & ERR_STDERR) != 0  &&  isatty(0) != 0)
 		fprintf (stderr, "%s: %s\n", program, error);
-        else
-                syslog(LOG_NOTICE, "%s%s", tag, p);
+	else
+#ifdef HAVE_SYSLOG_H
+		syslog(LOG_NOTICE, "%s%s", tag, p);
+#else
+		fprintf(stderr, "%s: %s\n", program, error);
+#endif
 
-        if ((rc & ERR_EXITCODEMASK) != 0) {
+	if ((rc & ERR_EXITCODEMASK) != 0) {
 		if (*get_exithandler() != 0)
 			run_exithandler(rc & ERR_ERRORMASK, error);
 
 		if ((rc & ERR_EXITCODEMASK) == ERR_ZEROEXITCODE)
 			exit (0);
 
-                exit (rc & ERR_EXITCODEMASK);
-		}
+		exit (rc & ERR_EXITCODEMASK);
+	}
 
-        return (0);
+	return (0);
 }
 
 int writestatfile(ftp_t *x, char *status)
@@ -163,7 +170,7 @@ int writestatfile(ftp_t *x, char *status)
 	return (0);
 }
 
-
+#if defined(HAVE_SYSLOG_H)
 int getfacility(char *s)
 {
 	int	fac;
@@ -199,8 +206,7 @@ int getfacility(char *s)
 /* printerror(0, "+INFO", "s= %s, fac= %d", s, fac); */
 	return (fac);
 }
-
-
+#endif
 
 void signal_handler(int sig)
 {
@@ -264,7 +270,10 @@ int main(int argc, char *argv[], char *envp[])
 
 	setvar("NAME", "ftp.proxy");		/* Changed from putenv() -- 2007-09-25/asg */
 
+#ifdef HAVE_SYSLOG_H
 	openlog(program, LOG_PID, logfacility);
+#endif
+
 	init_procinfo(NULL);
 
 #ifdef FTP_FILECOPY
@@ -446,6 +455,7 @@ int main(int argc, char *argv[], char *envp[])
 				bindport = strtoul(argv[k++], NULL, 10);
 				daemonmode = 1;
 				}
+#ifdef HAVE_SYSLOG_H
 			else if (c == 'L') {
 				char	par[80];
 
@@ -464,6 +474,7 @@ int main(int argc, char *argv[], char *envp[])
 					copy_string(logname, p, sizeof(logname));
 					}
 				}
+#endif
 			else if (c == 'O') {
 				if (k >= argc)
 					missing_arg(c, "statdir");
@@ -518,12 +529,12 @@ int main(int argc, char *argv[], char *envp[])
 	if (*config->configfile != 0)
 		readconfig(config, config->configfile, "");
 
-
+#ifdef HAVE_SYSLOG_H
 	if (logfacility != LOGFACILITY  ||  *logname != 0) {
 		closelog();
 		openlog(*logname == 0? program: logname, LOG_PID, logfacility);
 		}
-
+#endif
 
 	/*
 	 * Normal processing starts here.

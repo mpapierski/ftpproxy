@@ -43,7 +43,6 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
-#include <syslog.h>
 #include <sys/time.h>
 
 #include "ip-lib.h"
