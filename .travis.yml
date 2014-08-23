@@ -8,7 +8,14 @@ compiler:
 env:
     - BUILD_TYPE="Release"
     - BUILD_TYPE="Debug"
+matrix:
+  include:
+    - compiler: i586-mingw32msvc-gcc
+      env: OPTIONS="-DWIN32=ON -DMINGW=ON"
+      os: linux
 script:
-    - mkdir build && cd build
-    - cmake -DCMAKE_BUILD_TYPE="$BUILD_TYPE" ..
+    - mkdir _build
+    - cd _build
+    - cmake -DCMAKE_INSTALL_PREFIX="../_install" -DCMAKE_BUILD_TYPE="$BUILD_TYPE" $OPTIONS ..
     - cmake --build . --use-stderr
+    - cmake --build . --target install
