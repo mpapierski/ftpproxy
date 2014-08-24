@@ -659,7 +659,7 @@ int doquit(ftp_t *x)
 	char	resp[200];
 
 	if ((rc = sfputc(x, "QUIT", "", resp, sizeof(resp), NULL)) != 221)
-		printerror(0, "", "unexpected resonse to QUIT: %s", resp);
+		printerror(0, "", "unexpected response to QUIT: %s", resp);
 
 	cfputs(x, "221 goodbye");
 	printerror(0, "", "%d QUIT", rc);
