@@ -186,7 +186,7 @@ int getfacility(char *s)
 		}
 	else {
 #ifdef SYSLOG_NAMES
-		char	*p;
+		const char *p;
 		int	i;
 
 		for (i=0; (p = facilitynames[i].c_name) != NULL; i++) {
