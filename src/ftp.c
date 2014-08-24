@@ -1524,10 +1524,14 @@ int dologin(ftp_t *x)
 
 
 	/*
-	 * Get port and IP number of server.
+	 * Get port and IP number of server only if ctp is disabled
 	 */
 
-	x->server.port = get_port(x->server.name, 21);
+	if (*x->config->ctp == 0)
+	{
+		x->server.port = get_port(x->server.name, 21);
+	}
+
 	if ((hostp = gethostbyname(x->server.name)) == NULL) {
 		cfputs(x, "500 service unavailable");
 		printerror(1 | ERR_PROXY, "-ERR", "can't resolve hostname: %s", x->server.name);
